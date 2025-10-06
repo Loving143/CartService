@@ -1,5 +1,7 @@
 package com.cart.entity;
 
+import com.cart.response.MedicineResponse;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -17,15 +19,22 @@ public class CartItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long medicineCode;  
+    private String medicineCode;  
     private String medicineName;     
-    private Double price;           
-    private Boolean prescriptionRequired;
+    private Double price; 
     private Integer quantity;
+    private Double discount;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cart_id")
     private Cart cart;
+
+	public CartItem(MedicineResponse medicine) {
+		this.medicineCode = medicine.getMedicineCode();
+		this.medicineName = medicine.getName();
+		this.price = medicine.getPrice();
+		this.discount = medicine.getDiscount();
+	}
 
 	public Long getId() {
 		return id;
@@ -52,14 +61,6 @@ public class CartItem {
 		this.price = price;
 	}
 
-	public Boolean getPrescriptionRequired() {
-		return prescriptionRequired;
-	}
-
-	public void setPrescriptionRequired(Boolean prescriptionRequired) {
-		this.prescriptionRequired = prescriptionRequired;
-	}
-
 	public Integer getQuantity() {
 		return quantity;
 	}
@@ -76,13 +77,6 @@ public class CartItem {
 		this.cart = cart;
 	}
 
-	public Long getMedicineCode() {
-		return medicineCode;
-	}
-
-	public void setMedicineCode(Long medicineCode) {
-		this.medicineCode = medicineCode;
-	}
     
     
 }
