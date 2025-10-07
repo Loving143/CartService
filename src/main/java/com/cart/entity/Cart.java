@@ -3,8 +3,14 @@ package com.cart.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.cart.enumm.CartStatus;
+import com.cart.enumm.CartType;
+
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -19,13 +25,22 @@ public class Cart {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(unique = true,nullable = false)
     private String userName; 
 
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CartItem> items = new ArrayList<>();
 
     private Double totalPrice;
+    
+    @Enumerated(EnumType.STRING)
+    private CartType cartType;
 
+    @Enumerated(EnumType.STRING)
+    private CartStatus cartStatus;
+    
+    
+    
 	public Long getId() {
 		return id;
 	}
@@ -56,6 +71,22 @@ public class Cart {
 
 	public void setTotalPrice(Double totalPrice) {
 		this.totalPrice = totalPrice;
+	}
+
+	public CartType getCartType() {
+		return cartType;
+	}
+
+	public void setCartType(CartType cartType) {
+		this.cartType = cartType;
+	}
+
+	public CartStatus getCartStatus() {
+		return cartStatus;
+	}
+
+	public void setCartStatus(CartStatus cartStatus) {
+		this.cartStatus = cartStatus;
 	}
     
 }
