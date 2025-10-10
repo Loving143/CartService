@@ -33,6 +33,10 @@ public class Cart {
 
     private Double totalPrice;
     
+    private Double finalAmount;
+    
+    private Double discountedAmount;
+    
     @Enumerated(EnumType.STRING)
     private CartType cartType;
 
@@ -87,6 +91,22 @@ public class Cart {
 
 	public void setCartStatus(CartStatus cartStatus) {
 		this.cartStatus = cartStatus;
+	}
+
+	public Double getFinalAmount() {
+		return finalAmount;
+	}
+
+	public void setFinalAmount(Double finalAmount) {
+		this.finalAmount = finalAmount;
+	}
+
+	public Double getDiscountedAmount() {
+		return discountedAmount;
+	}
+
+	public void setDiscountedAmount(Double discountedAmount) {
+		this.discountedAmount = discountedAmount;
 	}
     
 }

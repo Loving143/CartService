@@ -24,6 +24,7 @@ public class CartItem {
     private Double price; 
     private Integer quantity;
     private Double discount;
+    private Double finalPrice;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cart_id")
@@ -34,6 +35,7 @@ public class CartItem {
 		this.medicineName = medicine.getName();
 		this.price = medicine.getPrice();
 		this.discount = medicine.getDiscount();
+		this.finalPrice = (quantity*price)-(quantity*discount);
 	}
 
 	public Long getId() {
@@ -75,6 +77,30 @@ public class CartItem {
 
 	public void setCart(Cart cart) {
 		this.cart = cart;
+	}
+
+	public String getMedicineCode() {
+		return medicineCode;
+	}
+
+	public void setMedicineCode(String medicineCode) {
+		this.medicineCode = medicineCode;
+	}
+
+	public Double getDiscount() {
+		return discount;
+	}
+
+	public void setDiscount(Double discount) {
+		this.discount = discount;
+	}
+
+	public Double getFinalPrice() {
+		return finalPrice;
+	}
+
+	public void setFinalPrice(Double finalPrice) {
+		this.finalPrice = finalPrice;
 	}
 
     

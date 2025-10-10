@@ -14,8 +14,10 @@ import com.cart.entity.Cart;
 import com.cart.entity.CartItem;
 import com.cart.enumm.CartStatus;
 import com.cart.enumm.CartType;
+import com.cart.mapper.CartMapper;
 import com.cart.repository.CartItemRepository;
 import com.cart.repository.CartRepository;
+import com.cart.response.CartResponse;
 import com.cart.response.MedicineResponse;
 
 @Service
@@ -50,5 +52,73 @@ public class CartServiceImpl implements CartService{
 		cart.getItems().add(cartItem);
 		cartRepository.save(cart);
 	}
+	
+	 @Override
+	    public CartResponse getCartForCurrentUser() {
+	        String userName = getCurrentUser();
+	        Cart cart = cartRepository.findByUserName(userName)
+	                .orElseThrow(() -> new RuntimeException("No active cart found for user"));
+	        return CartMapper.toResponse(cart);
+	    }
+
+	    @Override
+	    public void updateCartItemQuantity(Long itemId, int quantity) {
+	        CartItem item = cartItemRepository.findById(itemId)
+	                .orElseThrow(() -> new RuntimeException("Item not found"));
+	        item.setQuantity(quantity);
+	        cartItemRepository.save(item);
+	    }
+
+	    @Override
+	    public void removeCartItem(Long itemId) {
+	        cartItemRepository.deleteById(itemId);
+	    }
+
+	    @Override
+	    public void clearCart() {
+	        String userName = getCurrentUser();
+	        cartRepository.findByUserName(userName)
+	                .ifPresent(cart -> {
+	                    cart.getItems().clear();
+	                    cartRepository.save(cart);
+	                });
+	    }
+
+	    @Override
+	    public double calculateTotal() {
+	        String userName = getCurrentUser();
+	        Cart cart = cartRepository.findByUserName(userName)
+	                .orElseThrow(() -> new RuntimeException("No active cart found"));
+	        return cart.getItems().stream()
+	                .mapToDouble(i -> i.getPrice() * i.getQuantity())
+	                .sum();
+	    }
+
+	    @Override
+	    public String checkout() {
+	        String userName = getCurrentUser();
+	        Cart cart = cartRepository.findByUserName(userName)
+	                .orElseThrow(() -> new RuntimeException("Cart not found"));
+	        cart.setCartStatus(CartStatus.CHECKED_OUT);
+	        cartRepository.save(cart);
+	        return "Checkout successful for user: " + userName;
+	    }
+
+	    private String getCurrentUser() {
+	        UsernamePasswordAuthenticationToken userAuthToken =
+	                (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+	        return userAuthToken.getName();
+	    }
+	    
+	    @Override
+	    public int getCartSizeForCurrentUser() {
+	        String userName = getCurrentUser();
+
+	        Cart cart = cartRepository.findByUserName(userName)
+	                .orElseThrow(() -> new RuntimeException("Cart not found for user"));
+
+	        // Number of distinct items in cart
+	        return cart.getItems().size();
+	    }
 
 }
