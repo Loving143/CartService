@@ -25,7 +25,6 @@ public class CartController {
 	
 	@PostMapping("/addToCart")
 	public ResponseEntity<?>addToCart(@RequestBody AddToCartRequest req){
-		
 		cartService.addToCart(req);
 		return ResponseEntity.ok("Cart added successfully!!");
 	}
