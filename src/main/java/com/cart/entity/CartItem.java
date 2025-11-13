@@ -30,11 +30,12 @@ public class CartItem {
     @JoinColumn(name = "cart_id")
     private Cart cart;
 
-	public CartItem(MedicineResponse medicine) {
+	public CartItem(MedicineResponse medicine,int quantity) {
 		this.medicineCode = medicine.getMedicineCode();
 		this.medicineName = medicine.getName();
 		this.price = medicine.getPrice();
 		this.discount = medicine.getDiscount();
+		this.quantity = quantity;
 		this.finalPrice = (quantity*price)-(quantity*discount);
 	}
 
@@ -101,6 +102,11 @@ public class CartItem {
 
 	public void setFinalPrice(Double finalPrice) {
 		this.finalPrice = finalPrice;
+	}
+
+	public CartItem() {
+		super();
+		// TODO Auto-generated constructor stub
 	}
 
     

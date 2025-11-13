@@ -13,8 +13,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cart.cartService.CartService;
+import com.cart.cartService.OrderService;
 import com.cart.dto.AddToCartRequest;
+import com.cart.dto.OrderRequest;
+import com.cart.entity.CartItem;
 import com.cart.response.CartResponse;
+import com.cart.response.OrderResponse;
 
 @RestController
 @RequestMapping("/cart")
@@ -22,6 +26,9 @@ public class CartController {
 	
 	@Autowired
 	private CartService cartService;
+	
+	@Autowired
+	private OrderService orderService;
 	
 	@PostMapping("/addToCart")
 	public ResponseEntity<?>addToCart(@RequestBody AddToCartRequest req){
@@ -42,7 +49,7 @@ public class CartController {
     }
 
     // ✅ Remove single item
-    @DeleteMapping("/item/{itemId}")
+    @DeleteMapping("/remove/cartItems/{itemId}")
     public void removeItem(@PathVariable Long itemId) {
         cartService.removeCartItem(itemId);
     }
@@ -60,7 +67,7 @@ public class CartController {
     }
 
     // ✅ Checkout (optional)
-    @PostMapping("/checkout")
+    @PutMapping("/checkout")
     public String checkout() {
         return cartService.checkout();
     }
@@ -69,5 +76,23 @@ public class CartController {
     public int getCartSize() {
         return cartService.getCartSizeForCurrentUser();
     }
+    
+    @GetMapping("/get/cartItems")
+    public ResponseEntity<?> getCurrentUserCartItems(){
+    	return  ResponseEntity.ok(cartService.getcurrentUserCartItems());
+    }
 
+    @PutMapping("/updateQuantity/{id}")
+    public ResponseEntity<?> updateCartQuantity(@PathVariable Long id,
+            @RequestParam String action) {
+
+        CartItem updatedItem = cartService.updateCartQuantity(id, action);
+        return ResponseEntity.ok(updatedItem);
+    }
+    
+    @PostMapping("/create/order")
+    public ResponseEntity<OrderResponse> createOrder(@RequestBody OrderRequest request) {
+        OrderResponse response = orderService.createOrder(request);
+        return ResponseEntity.ok(response);
+    }
 }

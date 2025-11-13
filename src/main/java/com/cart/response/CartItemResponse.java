@@ -1,12 +1,28 @@
 package com.cart.response;
 
+import com.cart.entity.CartItem;
+
 public class CartItemResponse {
 	 private String medicineName;
 	 private int quantity;
 	 private double finalPrice;
 	 private double price;
 	 private double discount;
+	 private Long id;
 	 
+	 public CartItemResponse(CartItem item) {
+		 this.medicineName = item.getMedicineName();
+		 this.quantity = item.getQuantity();
+		 this.finalPrice = item.getFinalPrice();
+		 this.price = item.getPrice();
+		 this.discount = item.getDiscount();
+		 this.id = item.getId();
+	 }
+	 
+	public CartItemResponse() {
+		// TODO Auto-generated constructor stub
+	}
+
 	public String getMedicineName() {
 		return medicineName;
 	}
@@ -39,6 +55,14 @@ public class CartItemResponse {
 	}
 	public void setDiscount(double discount) {
 		this.discount = discount;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 	 
 	

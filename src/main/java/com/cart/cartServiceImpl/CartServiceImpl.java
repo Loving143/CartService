@@ -1,9 +1,12 @@
 package com.cart.cartServiceImpl;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -17,13 +20,14 @@ import com.cart.enumm.CartType;
 import com.cart.mapper.CartMapper;
 import com.cart.repository.CartItemRepository;
 import com.cart.repository.CartRepository;
+import com.cart.response.CartItemResponse;
 import com.cart.response.CartResponse;
 import com.cart.response.MedicineResponse;
 
 @Service
 public class CartServiceImpl implements CartService{
 
-	@Autowired
+	
 	private UserProfileClient userProfileClient;
 	
 	@Autowired
@@ -32,6 +36,10 @@ public class CartServiceImpl implements CartService{
 	@Autowired
 	private CartRepository cartRepository;
 	
+	public CartServiceImpl(UserProfileClient userProfileClient) {
+		this.userProfileClient = userProfileClient;
+	}
+	
 	@Override
 	public void addToCart(AddToCartRequest req) {
 		UsernamePasswordAuthenticationToken userAuthToken = (UsernamePasswordAuthenticationToken)SecurityContextHolder.getContext().getAuthentication();
@@ -39,9 +47,10 @@ public class CartServiceImpl implements CartService{
 		Optional<Cart>cartOpt = cartRepository.findByUserName(userName);
 		Cart cart=null;
 		MedicineResponse medicine =  userProfileClient.fetchMedicineData(req.getMedicineCode());
-		CartItem cartItem = new CartItem(medicine);
+		CartItem cartItem = new CartItem(medicine,req.getQuantity());
 		if(cartOpt.isEmpty()) {
 			cart = new Cart();
+			cart.setUserName(userName);
 			cart.setCartStatus(CartStatus.ACTIVE);
 			cart.setCartType(CartType.DEFAULT);
 			cart = cartRepository.save(cart);
@@ -99,8 +108,26 @@ public class CartServiceImpl implements CartService{
 	        String userName = getCurrentUser();
 	        Cart cart = cartRepository.findByUserName(userName)
 	                .orElseThrow(() -> new RuntimeException("Cart not found"));
+	        Double subTotal = cart.getItems().stream().mapToDouble(e->e.getFinalPrice()).sum();
+	        Double discountedAmount = cart.getItems().stream().mapToDouble(e->e.getDiscount()).sum();
 	        cart.setCartStatus(CartStatus.CHECKED_OUT);
+	        Double taxCharge= 0.05*subTotal;
+	        Integer deliveryCharge=0;
+	        if(subTotal<500) {
+	        	deliveryCharge =40;
+	        }else if(subTotal<1000) {
+	        	deliveryCharge = 20;
+	        }else {
+	        	deliveryCharge=0;
+	        }
+	        cart.setSubTotalAmount(subTotal);
+	        cart.setDeliveryCharge(deliveryCharge);
+	        cart.setDiscountedAmount(discountedAmount);
+	        cart.setTaxCharge(taxCharge);
+	        cart.setFinalAmount(subTotal + taxCharge + deliveryCharge);
+	        cart.getItems().clear();
 	        cartRepository.save(cart);
+	        
 	        return "Checkout successful for user: " + userName;
 	    }
 
@@ -120,5 +147,35 @@ public class CartServiceImpl implements CartService{
 	        // Number of distinct items in cart
 	        return cart.getItems().size();
 	    }
+
+		@Override
+		public List<CartItemResponse> getcurrentUserCartItems() {
+			String userName = getCurrentUser();
+			return cartRepository.fetchCurrentUsersCartItems(userName).
+				stream().map(CartItemResponse::new).collect(Collectors.toList());
+		}
+
+		@Override
+		public CartItem updateCartQuantity(Long id, String action) {
+			CartItem cartItem = cartItemRepository.findById(id)
+	                .orElseThrow(() -> new RuntimeException("Cart item not found"));
+
+	        if ("inc".equalsIgnoreCase(action)) {
+	            cartItem.setQuantity(cartItem.getQuantity() + 1);
+	            cartItem.setFinalPrice((cartItem.getPrice()*cartItem.getQuantity())-cartItem.getDiscount()*cartItem.getQuantity());
+	        } else if ("dec".equalsIgnoreCase(action)) {
+	            if (cartItem.getQuantity() > 1) {
+	                cartItem.setQuantity(cartItem.getQuantity() - 1);
+	                cartItem.setFinalPrice((cartItem.getPrice()*cartItem.getQuantity())-cartItem.getDiscount()*cartItem.getQuantity());
+	    	        
+	            } else {
+	                // Optional: remove item if quantity becomes 0
+	                cartItemRepository.delete(cartItem);
+	                return null;
+	            }
+	        }
+
+	        return cartItemRepository.save(cartItem);
+		}
 
 }

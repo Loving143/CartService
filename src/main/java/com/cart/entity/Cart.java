@@ -31,7 +31,7 @@ public class Cart {
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CartItem> items = new ArrayList<>();
 
-    private Double totalPrice;
+    private Double subTotalAmount;
     
     private Double finalAmount;
     
@@ -43,6 +43,9 @@ public class Cart {
     @Enumerated(EnumType.STRING)
     private CartStatus cartStatus;
     
+    private Integer deliveryCharge;
+    
+    private Double taxCharge;
     
     
 	public Long getId() {
@@ -70,11 +73,7 @@ public class Cart {
 	}
 
 	public Double getTotalPrice() {
-		return totalPrice;
-	}
-
-	public void setTotalPrice(Double totalPrice) {
-		this.totalPrice = totalPrice;
+		return subTotalAmount;
 	}
 
 	public CartType getCartType() {
@@ -108,6 +107,34 @@ public class Cart {
 	public void setDiscountedAmount(Double discountedAmount) {
 		this.discountedAmount = discountedAmount;
 	}
+
+	public Cart() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	public Double getSubTotalAmount() {
+		return subTotalAmount;
+	}
+
+	public void setSubTotalAmount(Double subTotalAmount) {
+		this.subTotalAmount = subTotalAmount;
+	}
+
+	public Integer getDeliveryCharge() {
+		return deliveryCharge;
+	}
+
+	public void setDeliveryCharge(Integer deliveryCharge) {
+		this.deliveryCharge = deliveryCharge;
+	}
+
+	public Double getTaxCharge() {
+		return taxCharge;
+	}
+
+	public void setTaxCharge(Double taxCharge) {
+		this.taxCharge = taxCharge;
+	}
     
 }
-
