@@ -13,12 +13,12 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 
 @Entity
-public class Order {
+public class Orders{
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY) 
+    private Long id; 
 
-    @Column(unique = true,nullable = false)
+    @Column(unique = true,nullable = false) 
     private String userName; 
 
     private LocalDateTime orderDate;

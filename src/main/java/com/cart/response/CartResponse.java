@@ -2,6 +2,7 @@ package com.cart.response;
 
 import java.util.List;
 
+import com.cart.entity.Cart;
 import com.cart.enumm.CartStatus;
 
 public class CartResponse {
@@ -15,6 +16,11 @@ public class CartResponse {
     private double discountAmount;
     private double finalAmount;
     
+	public CartResponse(Cart cart) {
+	}
+	public CartResponse() {
+		// TODO Auto-generated constructor stub
+	}
 	public Long getId() {
 		return id;
 	}

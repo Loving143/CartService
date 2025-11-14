@@ -3,7 +3,9 @@ package com.cart.cartService;
 import java.util.List;
 
 import com.cart.dto.AddToCartRequest;
+import com.cart.entity.Cart;
 import com.cart.entity.CartItem;
+import com.cart.response.CartCheckoutResponse;
 import com.cart.response.CartItemResponse;
 import com.cart.response.CartResponse;
 
@@ -28,5 +30,7 @@ public interface CartService {
 	List<CartItemResponse> getcurrentUserCartItems();
 
 	CartItem updateCartQuantity(Long id, String action);
+
+	CartCheckoutResponse fetchLatestCheckedOutCart();
 
 }

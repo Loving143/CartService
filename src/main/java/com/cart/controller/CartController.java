@@ -17,8 +17,11 @@ import com.cart.cartService.OrderService;
 import com.cart.dto.AddToCartRequest;
 import com.cart.dto.OrderRequest;
 import com.cart.entity.CartItem;
+import com.cart.response.CartCheckoutResponse;
 import com.cart.response.CartResponse;
 import com.cart.response.OrderResponse;
+
+import feign.Response;
 
 @RestController
 @RequestMapping("/cart")
@@ -94,5 +97,11 @@ public class CartController {
     public ResponseEntity<OrderResponse> createOrder(@RequestBody OrderRequest request) {
         OrderResponse response = orderService.createOrder(request);
         return ResponseEntity.ok(response);
+    }
+    
+    @GetMapping("fetch/orderSummary")
+    public ResponseEntity<?> fetchOrderSummary(){
+    	CartCheckoutResponse response = cartService.fetchLatestCheckedOutCart();
+    	return ResponseEntity.ok(response);
     }
 }

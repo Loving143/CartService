@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import com.cart.cartService.OrderService;
 import com.cart.dto.OrderRequest;
 import com.cart.entity.Cart;
-import com.cart.entity.Order;
+import com.cart.entity.Orders;
 import com.cart.entity.OrderItem;
 import com.cart.repository.CartRepository;
 import com.cart.repository.OrderRepository;
@@ -27,7 +27,7 @@ public class OrderServiceImpl implements OrderService{
 		 Cart cart = cartRepo.findByUserName(userName)
 		            .orElseThrow(() -> new RuntimeException("Cart not found"));
 
-		        Order order = new Order();
+		        Orders order = new Orders();
 		        order.setUserName(cart.getUserName());
 		        order.setOrderDate(LocalDateTime.now());
 		        order.setTotalAmount(cart.getFinalAmount());
@@ -47,7 +47,7 @@ public class OrderServiceImpl implements OrderService{
 
 		        order.setOrderItems(orderItems);
 
-		        Order savedOrder = orderRepo.save(order);
+		        Orders savedOrder = orderRepo.save(order);
 
 		        // Clear the cart
 		        cart.getItems().clear();

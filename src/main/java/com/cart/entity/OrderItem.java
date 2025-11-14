@@ -13,7 +13,7 @@ public class OrderItem {
     private Long id;
 
     @ManyToOne
-    private Order order;
+    private Orders order;
 
     private String medicineName;
     private int quantity;
@@ -25,10 +25,10 @@ public class OrderItem {
 	public void setId(Long id) {
 		this.id = id;
 	}
-	public Order getOrder() {
+	public Orders getOrder() {
 		return order;
 	}
-	public void setOrder(Order order) {
+	public void setOrder(Orders order) {
 		this.order = order;
 	}
 	public String getMedicineName() {

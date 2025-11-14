@@ -19,4 +19,10 @@ public interface CartRepository extends JpaRepository<Cart,Long>{
 			+ " where cart.userName =:userName")
 	List<CartItem> fetchCurrentUsersCartItems(String userName);
 
+	
+	@Query("Select cart from Cart cart "
+			+ " where cart.userName =:userName "
+			+ " AND cart.cartStatus=com.cart.enumm.CartStatus.CHECKED_OUT")
+	Optional<Cart> fetchOrderSummary(String userName);
+
 }

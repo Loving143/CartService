@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -20,9 +19,12 @@ import com.cart.enumm.CartType;
 import com.cart.mapper.CartMapper;
 import com.cart.repository.CartItemRepository;
 import com.cart.repository.CartRepository;
+import com.cart.response.CartCheckoutResponse;
 import com.cart.response.CartItemResponse;
 import com.cart.response.CartResponse;
 import com.cart.response.MedicineResponse;
+
+import jakarta.ws.rs.BadRequestException;
 
 @Service
 public class CartServiceImpl implements CartService{
@@ -109,9 +111,10 @@ public class CartServiceImpl implements CartService{
 	        Cart cart = cartRepository.findByUserName(userName)
 	                .orElseThrow(() -> new RuntimeException("Cart not found"));
 	        Double subTotal = cart.getItems().stream().mapToDouble(e->e.getFinalPrice()).sum();
-	        Double discountedAmount = cart.getItems().stream().mapToDouble(e->e.getDiscount()).sum();
+	        Double discountedAmount = cart.getItems().stream().mapToDouble(e->e.getQuantity()*e.getDiscount()).sum();
 	        cart.setCartStatus(CartStatus.CHECKED_OUT);
 	        Double taxCharge= 0.05*subTotal;
+	        Double totalPrice = cart.getItems().stream().mapToDouble(e->e.getPrice()*e.getQuantity()).sum();
 	        Integer deliveryCharge=0;
 	        if(subTotal<500) {
 	        	deliveryCharge =40;
@@ -124,6 +127,7 @@ public class CartServiceImpl implements CartService{
 	        cart.setDeliveryCharge(deliveryCharge);
 	        cart.setDiscountedAmount(discountedAmount);
 	        cart.setTaxCharge(taxCharge);
+	        cart.setTotalPrice(totalPrice);
 	        cart.setFinalAmount(subTotal + taxCharge + deliveryCharge);
 	        cart.getItems().clear();
 	        cartRepository.save(cart);
@@ -176,6 +180,15 @@ public class CartServiceImpl implements CartService{
 	        }
 
 	        return cartItemRepository.save(cartItem);
+		}
+
+		@Override
+		public CartCheckoutResponse fetchLatestCheckedOutCart() {
+			String userName = getCurrentUser();
+			Cart cart = cartRepository.fetchOrderSummary(userName).
+					orElseThrow(()->new BadRequestException("Checked Out Cart not found!!"));
+			CartCheckoutResponse response = new CartCheckoutResponse(cart);
+			return response;
 		}
 
 }

@@ -47,6 +47,8 @@ public class Cart {
     
     private Double taxCharge;
     
+    private Double totalPrice;
+    
     
 	public Long getId() {
 		return id;
@@ -135,6 +137,10 @@ public class Cart {
 
 	public void setTaxCharge(Double taxCharge) {
 		this.taxCharge = taxCharge;
+	}
+
+	public void setTotalPrice(Double totalPrice) {
+		this.totalPrice = totalPrice;
 	}
     
 }
