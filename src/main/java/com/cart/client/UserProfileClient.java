@@ -12,4 +12,6 @@ public interface UserProfileClient {
 	@GetMapping("/fetchMedicine/{medicineCode}")
 	public MedicineResponse fetchMedicineData(@PathVariable String medicineCode); 
 	
+	
+	
 }

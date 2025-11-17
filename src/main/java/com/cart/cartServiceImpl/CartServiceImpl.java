@@ -10,6 +10,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.cart.cartService.CartService;
+import com.cart.client.UserProfileAddressClient;
 import com.cart.client.UserProfileClient;
 import com.cart.dto.AddToCartRequest;
 import com.cart.entity.Cart;
@@ -19,6 +20,7 @@ import com.cart.enumm.CartType;
 import com.cart.mapper.CartMapper;
 import com.cart.repository.CartItemRepository;
 import com.cart.repository.CartRepository;
+import com.cart.response.AddressResponse;
 import com.cart.response.CartCheckoutResponse;
 import com.cart.response.CartItemResponse;
 import com.cart.response.CartResponse;
@@ -32,14 +34,17 @@ public class CartServiceImpl implements CartService{
 	
 	private UserProfileClient userProfileClient;
 	
+	private UserProfileAddressClient userProfileAddressClient;
+	
 	@Autowired
 	private CartItemRepository cartItemRepository;
 	
 	@Autowired
 	private CartRepository cartRepository;
 	
-	public CartServiceImpl(UserProfileClient userProfileClient) {
+	public CartServiceImpl(UserProfileClient userProfileClient,UserProfileAddressClient userProfileAddressClient) {
 		this.userProfileClient = userProfileClient;
+		this.userProfileAddressClient = userProfileAddressClient;
 	}
 	
 	@Override
@@ -188,7 +193,18 @@ public class CartServiceImpl implements CartService{
 			Cart cart = cartRepository.fetchOrderSummary(userName).
 					orElseThrow(()->new BadRequestException("Checked Out Cart not found!!"));
 			CartCheckoutResponse response = new CartCheckoutResponse(cart);
+			AddressResponse addRes= userProfileAddressClient.fetchAddressById(cart.getAddressId());
+			response.setDeliveryAddress(addRes);
 			return response;
+		}
+
+		@Override
+		public void setAddressId(Integer id) {
+			String userName = getCurrentUser();
+			Cart cart = cartRepository.fetchOrderSummary(userName).
+					orElseThrow(()->new BadRequestException("Checked Out Cart not found!!"));
+			cart.setAddressId(id);
+			cartRepository.save(cart);
 		}
 
 }

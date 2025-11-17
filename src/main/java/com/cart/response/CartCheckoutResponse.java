@@ -11,6 +11,7 @@ public class CartCheckoutResponse {
 	private Double subTotalAmount;
 	private Double taxCharge;
 	private String userName;
+	private AddressResponse deliveryAddress;
 	
 	public CartCheckoutResponse(Cart cart) {
 		this.discountedAmount = cart.getDiscountedAmount();
@@ -64,6 +65,12 @@ public class CartCheckoutResponse {
 	}
 	public void setUserName(String userName) {
 		this.userName = userName;
+	}
+	public AddressResponse getDeliveryAddress() {
+		return deliveryAddress;
+	}
+	public void setDeliveryAddress(AddressResponse deliveryAddress) {
+		this.deliveryAddress = deliveryAddress;
 	}
 	
 	

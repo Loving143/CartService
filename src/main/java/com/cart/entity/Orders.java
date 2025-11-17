@@ -27,6 +27,8 @@ public class Orders{
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderItem> orderItems = new ArrayList<>();
+    
+    private Integer addressId;
 
 	public Long getId() {
 		return id;
@@ -74,6 +76,14 @@ public class Orders{
 
 	public void setOrderItems(List<OrderItem> orderItems) {
 		this.orderItems = orderItems;
+	}
+
+	public Integer getAddressId() {
+		return addressId;
+	}
+
+	public void setAddressId(Integer addressId) {
+		this.addressId = addressId;
 	}
     
     

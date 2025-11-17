@@ -49,6 +49,8 @@ public class Cart {
     
     private Double totalPrice;
     
+    private Integer addressId;
+    
     
 	public Long getId() {
 		return id;
@@ -141,6 +143,14 @@ public class Cart {
 
 	public void setTotalPrice(Double totalPrice) {
 		this.totalPrice = totalPrice;
+	}
+
+	public Integer getAddressId() {
+		return addressId;
+	}
+
+	public void setAddressId(Integer addressId) {
+		this.addressId = addressId;
 	}
     
 }

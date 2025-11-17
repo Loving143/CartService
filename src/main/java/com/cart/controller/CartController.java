@@ -104,4 +104,12 @@ public class CartController {
     	CartCheckoutResponse response = cartService.fetchLatestCheckedOutCart();
     	return ResponseEntity.ok(response);
     }
+    
+    @PutMapping("/setAddressId/{id}")
+    public ResponseEntity<?>setAddressId(@PathVariable Integer id){
+    	cartService.setAddressId(id);
+    	return ResponseEntity.ok("AddressId set successfully!!");
+    }
+    
+    
 }
